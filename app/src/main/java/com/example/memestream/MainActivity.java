@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -23,13 +24,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        int SDK_INT = android.os.Build.VERSION.SDK_INT;
-        if (SDK_INT > 8)
-        {
-            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
-                    .permitAll().build();
-            StrictMode.setThreadPolicy(policy);
-        }
+//        int SDK_INT = android.os.Build.VERSION.SDK_INT;
+//        if (SDK_INT > 8)
+//        {
+//            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+//                    .permitAll().build();
+//            StrictMode.setThreadPolicy(policy);
+//        }
+
+        MainActivity mainActivity = this;
 
 
         // Set the login onClick listener
@@ -40,19 +43,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                String response = HttpRequest.executeGet(MainActivity.serverBase);
+                new LoginTask().execute(mainActivity);
 
-                Log.d("something", response);
-
-                Toast.makeText(MainActivity.this, "adsf", Toast.LENGTH_SHORT).show();
             }
 
         });
 
         // Set the register onClick listener
         Button registerButton = this.findViewById(R.id.registerButton);
-
-        MainActivity mainActivity = this;
 
         registerButton.setOnClickListener(new View.OnClickListener() {
 
@@ -70,5 +68,33 @@ public class MainActivity extends AppCompatActivity {
 
         Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
         MainActivity.this.startActivity(intent);
+    }
+}
+
+class LoginTask extends AsyncTask<MainActivity, Void, String> {
+
+    private MainActivity mainActivity;
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+    }
+
+    @Override
+    protected String doInBackground(MainActivity... mainActivity) {
+
+        this.mainActivity = mainActivity[0];
+
+        String response = HttpRequest.executeGet(MainActivity.serverBase);
+
+        return response;
+    }
+
+
+    @Override
+    protected void onPostExecute(String result) {
+        super.onPostExecute(result);
+
+        Toast.makeText(this.mainActivity, result, Toast.LENGTH_SHORT).show();
     }
 }
