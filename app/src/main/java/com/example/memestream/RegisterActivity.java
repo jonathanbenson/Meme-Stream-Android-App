@@ -4,9 +4,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -26,7 +29,18 @@ public class RegisterActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
-                Toast.makeText(registerActivity, "register submit", Toast.LENGTH_SHORT).show();
+
+                String username = ((EditText)findViewById(R.id.registerUsernameField)).getText().toString();
+                String password = ((EditText)findViewById(R.id.registerPasswordField)).getText().toString();
+                String retypePassword = ((EditText)findViewById(R.id.registerRetypePasswordField)).getText().toString();
+
+                if (username.isEmpty() || password.isEmpty() || retypePassword.isEmpty())
+                    Toast.makeText(registerActivity, "Fields can't be empty!", Toast.LENGTH_SHORT).show();
+                else if (!password.equals(retypePassword))
+                    Toast.makeText(registerActivity, "Passwords don't match!", Toast.LENGTH_SHORT).show();
+                else
+                    new RegisterTask().execute(registerActivity, username, password);
+
             }
 
         });
@@ -54,5 +68,34 @@ public class RegisterActivity extends AppCompatActivity {
 
     public void register() {
 
+        new RegisterTask().execute(this);
+
     }
+}
+
+class RegisterTask extends AsyncTask<Object, Void, String> {
+
+    private RegisterActivity registerActivity;
+
+    @Override
+    protected String doInBackground(Object... params) {
+
+        this.registerActivity = (RegisterActivity)params[0];
+
+        String username = (String)params[1];
+        String password = (String)params[2];
+
+        String query = MainActivity.serverBase + "register/" + username + "/" + password;
+
+        String response = HttpRequest.executeGet(query);
+
+        return response;
+    }
+
+
+    @Override
+    protected void onPostExecute(String result) {
+        Log.d("register response", result);
+    }
+
 }

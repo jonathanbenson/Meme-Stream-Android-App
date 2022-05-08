@@ -76,11 +76,6 @@ class LoginTask extends AsyncTask<MainActivity, Void, String> {
     private MainActivity mainActivity;
 
     @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-    }
-
-    @Override
     protected String doInBackground(MainActivity... mainActivity) {
 
         this.mainActivity = mainActivity[0];
