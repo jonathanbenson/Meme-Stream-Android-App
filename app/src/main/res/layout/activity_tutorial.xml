@@ -6,4 +6,11 @@
     android:layout_height="match_parent"
     tools:context=".TutorialActivity">
 
+    <Button
+        android:id="@+id/tutorialGoBackButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="go back"
+        tools:layout_editor_absoluteX="158dp"
+        tools:layout_editor_absoluteY="542dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

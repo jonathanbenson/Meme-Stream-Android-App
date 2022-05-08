@@ -27,6 +27,18 @@ public class FeedActivity extends AppCompatActivity {
             }
 
         });
+
+        // Set the view tutorial button onclick listener
+        Button viewTutorialButton = this.findViewById(R.id.viewTutorialButton);
+
+        viewTutorialButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                feedActivity.viewTutorial();
+            }
+
+        });
     }
 
     public void logout() {
@@ -38,5 +50,13 @@ public class FeedActivity extends AppCompatActivity {
         // Navigate back to the MainActivity
         Intent intent = new Intent(FeedActivity.this, MainActivity.class);
         FeedActivity.this.startActivity(intent);
+    }
+
+    public void viewTutorial() {
+
+        // Navigate to the TutorialActivity to view the tutorial
+        Intent intent = new Intent(FeedActivity.this, TutorialActivity.class);
+        FeedActivity.this.startActivity(intent);
+
     }
 }
