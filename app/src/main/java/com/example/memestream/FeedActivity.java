@@ -88,7 +88,7 @@ public class FeedActivity extends AppCompatActivity {
 
         String currentPost = "a" + String.valueOf(this.viewPager.getCurrentItem() + 1);
 
-        Toast.makeText(this, currentPost, Toast.LENGTH_SHORT).show();
+        new FetchLikesTask().execute(this, currentPost);
 
     }
 
@@ -152,8 +152,38 @@ public class FeedActivity extends AppCompatActivity {
         FeedActivity.this.startActivity(intent);
 
     }
+
+    private void fetchComments(String postTitle) {
+
+    }
 }
 
+class Like {
+
+    private String username;
+
+    public Like(String username) {
+        this.username = username;
+    }
+
+    public String getUsername() { return this.username; }
+}
+
+class Comment {
+
+    private String username;
+    private String comment;
+
+    public Comment(String username, String comment) {
+        this.username = username;
+        this.comment = comment;
+    }
+
+    public String getUsername() { return this.username; }
+    public String getComment() { return this.comment; }
+
+
+}
 
 class LikeTask extends AsyncTask<Object, Void, String> {
 
@@ -200,6 +230,33 @@ class LikeTask extends AsyncTask<Object, Void, String> {
             Toast.makeText(this.feedActivity, "An error occurred!", Toast.LENGTH_SHORT).show();
         }
 
+    }
+
+}
+
+class FetchLikesTask extends AsyncTask<Object, Void, String> {
+
+    private FeedActivity feedActivity;
+
+    @Override
+    protected String doInBackground(Object... params) {
+
+        this.feedActivity = (FeedActivity)params[0];
+
+        String postTitle = (String)params[1];
+
+        String query = MainActivity.serverBase + "likes/" + postTitle;
+
+        String response = HttpRequest.executeGet(query);
+
+        return response;
+    }
+
+
+    @Override
+    protected void onPostExecute(String result) {
+
+        Log.d("likes: ", result);
 
     }
 
