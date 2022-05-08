@@ -79,15 +79,17 @@ class RegisterTask extends AsyncTask<Object, Void, String> {
 
     private RegisterActivity registerActivity;
 
+    private String username;
+
     @Override
     protected String doInBackground(Object... params) {
 
         this.registerActivity = (RegisterActivity)params[0];
 
-        String username = (String)params[1];
+        this.username = (String)params[1];
         String password = (String)params[2];
 
-        String query = MainActivity.serverBase + "register/" + username + "/" + password;
+        String query = MainActivity.serverBase + "register/" + this.username + "/" + password;
 
         String response = HttpRequest.executeGet(query);
 
@@ -110,8 +112,9 @@ class RegisterTask extends AsyncTask<Object, Void, String> {
             String sKey = json.getString("key");
 
             MainActivity.sessionKey = sKey;
+            MainActivity.username = this.username;
 
-            Toast.makeText(this.registerActivity, "Welcome to Memestream!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this.registerActivity, "Welcome, " + this.username + "!", Toast.LENGTH_SHORT).show();
 
         }
         catch (JSONException exc) {
