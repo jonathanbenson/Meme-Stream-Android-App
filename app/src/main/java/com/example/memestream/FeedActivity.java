@@ -4,10 +4,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class FeedActivity extends AppCompatActivity {
 
@@ -23,6 +28,8 @@ public class FeedActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed);
 
+        FeedActivity feedActivity = this;
+
         // Initialze ViewPager
 
         this.viewPager = (ViewPager)findViewById(R.id.contentViewPager);
@@ -31,9 +38,14 @@ public class FeedActivity extends AppCompatActivity {
 
         this.viewPager.setAdapter(this.viewPagerAdapter);
 
+        this.viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
 
+            @Override
+            public void onPageSelected(int position) {
+                feedActivity.pageChange();
+            }
 
-        FeedActivity feedActivity = this;
+        });
 
         // Set the logout button onclick listener
         Button logoutButton = this.findViewById(R.id.logoutButton);
@@ -72,6 +84,14 @@ public class FeedActivity extends AppCompatActivity {
         });
     }
 
+    public void pageChange() {
+
+        String currentPost = "a" + String.valueOf(this.viewPager.getCurrentItem() + 1);
+
+        Toast.makeText(this, currentPost, Toast.LENGTH_SHORT).show();
+
+    }
+
     public void logout() {
 
         // user is logging out, so reset the session key and username
@@ -95,7 +115,7 @@ public class FeedActivity extends AppCompatActivity {
 
         String currentPost = "a" + String.valueOf(this.viewPager.getCurrentItem() + 1);
 
-        Toast.makeText(this, currentPost, Toast.LENGTH_SHORT).show();
+        new LikeTask().execute(this, MainActivity.username, MainActivity.sessionKey, currentPost);
 
     }
 
@@ -120,4 +140,55 @@ public class FeedActivity extends AppCompatActivity {
         FeedActivity.this.startActivity(intent);
 
     }
+}
+
+
+class LikeTask extends AsyncTask<Object, Void, String> {
+
+    private FeedActivity feedActivity;
+
+    @Override
+    protected String doInBackground(Object... params) {
+
+        this.feedActivity = (FeedActivity)params[0];
+
+        String username = (String)params[1];
+        String sessionKey = (String)params[2];
+        String postTitle = (String)params[3];
+
+        String query = MainActivity.serverBase + "like/" + username + "/" + sessionKey + "/" + postTitle;
+
+        String response = HttpRequest.executeGet(query);
+
+        return response;
+    }
+
+
+    @Override
+    protected void onPostExecute(String result) {
+
+        try {
+
+            Log.d("response", result);
+
+            final JSONObject json = new JSONObject(result);
+
+            int status = json.getInt("status");
+
+            if (status == 0)
+                throw new Exception();
+
+            Toast.makeText(this.feedActivity, "Liked post!", Toast.LENGTH_SHORT).show();
+
+        }
+        catch (JSONException exc) {
+            Toast.makeText(this.feedActivity, "Cannot connect to server!", Toast.LENGTH_SHORT).show();
+        }
+        catch (Exception excep) {
+            Toast.makeText(this.feedActivity, "An error occurred!", Toast.LENGTH_SHORT).show();
+        }
+
+
+    }
+
 }
