@@ -69,6 +69,12 @@ public class RegisterActivity extends AppCompatActivity {
             new RegisterTask().execute(this, username, password);
 
     }
+
+    public void navigateToFeed() {
+        // Navigate back to the FeedActivity
+        Intent intent = new Intent(RegisterActivity.this, FeedActivity.class);
+        RegisterActivity.this.startActivity(intent);
+    }
 }
 
 class RegisterTask extends AsyncTask<Object, Void, String> {
@@ -111,6 +117,8 @@ class RegisterTask extends AsyncTask<Object, Void, String> {
             MainActivity.username = this.username;
 
             Toast.makeText(this.registerActivity, "Welcome, " + this.username + "!", Toast.LENGTH_SHORT).show();
+
+            this.registerActivity.navigateToFeed();
 
         }
         catch (JSONException exc) {
