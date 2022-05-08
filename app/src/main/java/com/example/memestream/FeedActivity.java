@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class FeedActivity extends AppCompatActivity {
 
@@ -55,19 +56,19 @@ public class FeedActivity extends AppCompatActivity {
         });
 
         // Set the view likes button onclick listener
-        Button viewLikesButton = this.findViewById(R.id.viewLikesButton);
+        Button likeButton = this.findViewById(R.id.likeButton);
 
-        viewLikesButton.setOnClickListener(new View.OnClickListener() {
+        likeButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) { feedActivity.viewLikes(); }
+            public void onClick(View view) { feedActivity.like(); }
         });
 
         // Set the view comments button onclick listener
-        Button viewCommentsButton = this.findViewById(R.id.viewCommentsButton);
+        Button commentButton = this.findViewById(R.id.commentButton);
 
-        viewCommentsButton.setOnClickListener(new View.OnClickListener() {
+        commentButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) { feedActivity.viewComments(); }
+            public void onClick(View view) { feedActivity.comment(); }
         });
     }
 
@@ -90,17 +91,31 @@ public class FeedActivity extends AppCompatActivity {
 
     }
 
+    public void like() {
+
+        String currentPost = "a" + String.valueOf(this.viewPager.getCurrentItem() + 1);
+
+        Toast.makeText(this, currentPost, Toast.LENGTH_SHORT).show();
+
+    }
+
     public void viewLikes() {
 
-        // Navigate to the TutorialActivity to view the tutorial
+        // Navigate to the LikesActivity to view the likes
         Intent intent = new Intent(FeedActivity.this, LikesActivity.class);
         FeedActivity.this.startActivity(intent);
 
     }
 
+    public void comment() {
+        // Navigate to the AddCommentActivity to add a comment
+        Intent intent = new Intent(FeedActivity.this, AddCommentActivity.class);
+        FeedActivity.this.startActivity(intent);
+    }
+
     public void viewComments() {
 
-        // Navigate to the TutorialActivity to view the tutorial
+        // Navigate to the CommentsActivity to view the comments
         Intent intent = new Intent(FeedActivity.this, CommentsActivity.class);
         FeedActivity.this.startActivity(intent);
 

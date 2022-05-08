@@ -32,7 +32,7 @@ public class AddCommentActivity extends AppCompatActivity {
     public void goBack() {
 
         // Navigate back to the FeedActivity
-        Intent intent = new Intent(AddCommentActivity.this, CommentsActivity.class);
+        Intent intent = new Intent(AddCommentActivity.this, FeedActivity.class);
         AddCommentActivity.this.startActivity(intent);
 
     }
