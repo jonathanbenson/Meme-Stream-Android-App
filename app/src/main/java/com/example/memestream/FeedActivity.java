@@ -94,10 +94,6 @@ public class FeedActivity extends AppCompatActivity {
 
     public void logout() {
 
-        // user is logging out, so reset the session key and username
-        MainActivity.sessionKey = "";
-        MainActivity.username = "";
-
         // Navigate back to the MainActivity
         Intent intent = new Intent(FeedActivity.this, MainActivity.class);
         FeedActivity.this.startActivity(intent);
@@ -115,7 +111,11 @@ public class FeedActivity extends AppCompatActivity {
 
         String currentPost = "a" + String.valueOf(this.viewPager.getCurrentItem() + 1);
 
-        new LikeTask().execute(this, MainActivity.username, MainActivity.sessionKey, currentPost);
+        Bundle extras = this.getIntent().getExtras();
+        String username = extras.getString("username");
+        String sessionKey = extras.getString("sessionKey");
+
+        new LikeTask().execute(this, username, sessionKey, currentPost);
 
     }
 
@@ -128,8 +128,20 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     public void comment() {
+
+        String currentPost = "a" + String.valueOf(this.viewPager.getCurrentItem() + 1);
+
         // Navigate to the AddCommentActivity to add a comment
         Intent intent = new Intent(FeedActivity.this, AddCommentActivity.class);
+
+        Bundle extras = this.getIntent().getExtras();
+        String username = extras.getString("username");
+        String sessionKey = extras.getString("sessionKey");
+
+        intent.putExtra("username", username);
+        intent.putExtra("sessionKey", sessionKey);
+        intent.putExtra("post", currentPost);
+
         FeedActivity.this.startActivity(intent);
     }
 

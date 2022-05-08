@@ -20,8 +20,8 @@ import org.json.JSONObject;
 public class MainActivity extends AppCompatActivity {
 
     public static final String serverBase = "http://10.0.2.2:3000/";
-    public static String sessionKey = "";
-    public static String username = "";
+    private String sessionKey = "";
+    private String username = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,8 +76,15 @@ public class MainActivity extends AppCompatActivity {
     public void navigateToFeed() {
         // Navigate back to the FeedActivity
         Intent intent = new Intent(MainActivity.this, FeedActivity.class);
+
+        intent.putExtra("username", this.username);
+        intent.putExtra("sessionKey", this.sessionKey);
+
         MainActivity.this.startActivity(intent);
     }
+
+    public void setSessionKey(String newSessionKey) { this.sessionKey = newSessionKey; }
+    public void setUsername(String newUsername) { this.username = newUsername; }
 }
 
 class LoginTask extends AsyncTask<Object, Void, String> {
@@ -116,8 +123,8 @@ class LoginTask extends AsyncTask<Object, Void, String> {
 
             String sKey = json.getString("key");
 
-            MainActivity.sessionKey = sKey;
-            MainActivity.username = this.username;
+            this.mainActivity.setSessionKey(sKey);
+            this.mainActivity.setSessionKey(this.username);
 
             Toast.makeText(this.mainActivity, "Welcome back, " + this.username + "!", Toast.LENGTH_SHORT).show();
 

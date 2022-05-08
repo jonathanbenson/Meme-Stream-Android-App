@@ -70,9 +70,12 @@ public class RegisterActivity extends AppCompatActivity {
 
     }
 
-    public void navigateToFeed() {
+    public void navigateToFeed(String username, String sessionKey) {
         // Navigate back to the FeedActivity
         Intent intent = new Intent(RegisterActivity.this, FeedActivity.class);
+        intent.putExtra("username", username);
+        intent.putExtra("sessionKey", sessionKey);
+
         RegisterActivity.this.startActivity(intent);
     }
 }
@@ -113,12 +116,9 @@ class RegisterTask extends AsyncTask<Object, Void, String> {
 
             String sKey = json.getString("key");
 
-            MainActivity.sessionKey = sKey;
-            MainActivity.username = this.username;
-
             Toast.makeText(this.registerActivity, "Welcome, " + this.username + "!", Toast.LENGTH_SHORT).show();
 
-            this.registerActivity.navigateToFeed();
+            this.registerActivity.navigateToFeed(this.username, sKey);
 
         }
         catch (JSONException exc) {
