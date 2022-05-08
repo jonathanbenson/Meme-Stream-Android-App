@@ -1,6 +1,7 @@
 package com.example.memestream;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,10 +10,27 @@ import android.widget.Button;
 
 public class FeedActivity extends AppCompatActivity {
 
+    private ViewPager viewPager;
+
+    private int[] images = {R.drawable.a1, R.drawable.a2, R.drawable.a3, R.drawable.a4,
+            R.drawable.a5, R.drawable.a6};
+
+    private ViewPagerAdapter viewPagerAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed);
+
+        // Initialze ViewPager
+
+        this.viewPager = (ViewPager)findViewById(R.id.contentViewPager);
+
+        this.viewPagerAdapter = new ViewPagerAdapter(FeedActivity.this, images);
+
+        this.viewPager.setAdapter(this.viewPagerAdapter);
+
+
 
         FeedActivity feedActivity = this;
 
