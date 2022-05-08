@@ -114,6 +114,8 @@ class LoginTask extends AsyncTask<Object, Void, String> {
     protected void onPostExecute(String result) {
         try {
 
+            Log.d("result", result);
+
             final JSONObject json = new JSONObject(result);
 
             int status = json.getInt("status");
@@ -124,7 +126,7 @@ class LoginTask extends AsyncTask<Object, Void, String> {
             String sKey = json.getString("key");
 
             this.mainActivity.setSessionKey(sKey);
-            this.mainActivity.setSessionKey(this.username);
+            this.mainActivity.setUsername(this.username);
 
             Toast.makeText(this.mainActivity, "Welcome back, " + this.username + "!", Toast.LENGTH_SHORT).show();
 
