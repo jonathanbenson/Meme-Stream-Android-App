@@ -32,12 +32,24 @@ public class FeedActivity extends AppCompatActivity {
         Button viewTutorialButton = this.findViewById(R.id.viewTutorialButton);
 
         viewTutorialButton.setOnClickListener(new View.OnClickListener() {
-
             @Override
-            public void onClick(View view) {
-                feedActivity.viewTutorial();
-            }
+            public void onClick(View view) { feedActivity.viewTutorial(); }
+        });
 
+        // Set the view likes button onclick listener
+        Button viewLikesButton = this.findViewById(R.id.viewLikesButton);
+
+        viewLikesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) { feedActivity.viewLikes(); }
+        });
+
+        // Set the view comments button onclick listener
+        Button viewCommentsButton = this.findViewById(R.id.viewCommentsButton);
+
+        viewCommentsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) { feedActivity.viewComments(); }
         });
     }
 
@@ -56,6 +68,22 @@ public class FeedActivity extends AppCompatActivity {
 
         // Navigate to the TutorialActivity to view the tutorial
         Intent intent = new Intent(FeedActivity.this, TutorialActivity.class);
+        FeedActivity.this.startActivity(intent);
+
+    }
+
+    public void viewLikes() {
+
+        // Navigate to the TutorialActivity to view the tutorial
+        Intent intent = new Intent(FeedActivity.this, LikesActivity.class);
+        FeedActivity.this.startActivity(intent);
+
+    }
+
+    public void viewComments() {
+
+        // Navigate to the TutorialActivity to view the tutorial
+        Intent intent = new Intent(FeedActivity.this, CommentsActivity.class);
         FeedActivity.this.startActivity(intent);
 
     }
