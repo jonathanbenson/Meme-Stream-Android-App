@@ -2,7 +2,6 @@ package com.example.memestream;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -11,6 +10,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -95,7 +97,31 @@ class RegisterTask extends AsyncTask<Object, Void, String> {
 
     @Override
     protected void onPostExecute(String result) {
-        Log.d("register response", result);
+
+        try {
+
+            final JSONObject json = new JSONObject(result);
+
+            int status = json.getInt("status");
+
+            if (status == 0)
+                throw new Exception();
+
+            String sKey = json.getString("key");
+
+            MainActivity.sessionKey = sKey;
+
+            Toast.makeText(this.registerActivity, "Welcome to Memestream!", Toast.LENGTH_SHORT).show();
+
+        }
+        catch (JSONException exc) {
+            Toast.makeText(this.registerActivity, "Cannot connect to server!", Toast.LENGTH_SHORT).show();
+        }
+        catch (Exception excep) {
+            Toast.makeText(this.registerActivity, "Username already exists!", Toast.LENGTH_SHORT).show();
+        }
+
+
     }
 
 }
