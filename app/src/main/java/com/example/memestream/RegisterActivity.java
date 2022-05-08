@@ -30,20 +30,7 @@ public class RegisterActivity extends AppCompatActivity {
         registerSubmitButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
-            public void onClick(View view) {
-
-                String username = ((EditText)findViewById(R.id.registerUsernameField)).getText().toString();
-                String password = ((EditText)findViewById(R.id.registerPasswordField)).getText().toString();
-                String retypePassword = ((EditText)findViewById(R.id.registerRetypePasswordField)).getText().toString();
-
-                if (username.isEmpty() || password.isEmpty() || retypePassword.isEmpty())
-                    Toast.makeText(registerActivity, "Fields can't be empty!", Toast.LENGTH_SHORT).show();
-                else if (!password.equals(retypePassword))
-                    Toast.makeText(registerActivity, "Passwords don't match!", Toast.LENGTH_SHORT).show();
-                else
-                    new RegisterTask().execute(registerActivity, username, password);
-
-            }
+            public void onClick(View view) { registerActivity.register(); }
 
         });
 
@@ -70,7 +57,16 @@ public class RegisterActivity extends AppCompatActivity {
 
     public void register() {
 
-        new RegisterTask().execute(this);
+        String username = ((EditText)findViewById(R.id.registerUsernameField)).getText().toString();
+        String password = ((EditText)findViewById(R.id.registerPasswordField)).getText().toString();
+        String retypePassword = ((EditText)findViewById(R.id.registerRetypePasswordField)).getText().toString();
+
+        if (username.isEmpty() || password.isEmpty() || retypePassword.isEmpty())
+            Toast.makeText(this, "Fields can't be empty!", Toast.LENGTH_SHORT).show();
+        else if (!password.equals(retypePassword))
+            Toast.makeText(this, "Passwords don't match!", Toast.LENGTH_SHORT).show();
+        else
+            new RegisterTask().execute(this, username, password);
 
     }
 }
