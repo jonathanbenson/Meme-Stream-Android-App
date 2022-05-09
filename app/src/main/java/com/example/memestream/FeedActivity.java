@@ -18,7 +18,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class FeedActivity extends AppCompatActivity {
+    /*
+    The FeedActivity is where the user can scroll through the different memes of the application.
 
+    This is where users can like and comment on memes. They can also view a funny video by clicking
+    the funny video button in the top right.
+     */
     private ViewPager viewPager;
 
     private int[] images = {R.drawable.a1, R.drawable.a2, R.drawable.a3, R.drawable.a4,
@@ -36,14 +41,14 @@ public class FeedActivity extends AppCompatActivity {
 
         FeedActivity feedActivity = this;
 
-        // Initialze ViewPager
 
+        // Setup of the ViewPager that will house the memes
         this.viewPager = (ViewPager)findViewById(R.id.contentViewPager);
-
         this.viewPagerAdapter = new ViewPagerAdapter(FeedActivity.this, images);
-
         this.viewPager.setAdapter(this.viewPagerAdapter);
 
+        // Set a SimpleOnPageChangeListener to listen for when the user views a new image
+        // This will cause the app to query the database for the meme's likes and comments
         this.viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
 
             @Override
@@ -53,24 +58,27 @@ public class FeedActivity extends AppCompatActivity {
 
         });
 
+        // The following two statements are to make sure the FeedActivity loads the last post
+        // the user was looking at before they navigated away to another activity
         String currentPost = this.getIntent().getExtras().getString("post");
-
         if (currentPost != null)
             this.viewPager.setCurrentItem(this.positionFromPostTitle(currentPost));
 
         // Set the logout button onclick listener
+        // this will send the user back to the MainActivity
         Button logoutButton = this.findViewById(R.id.logoutButton);
 
         logoutButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
-                feedActivity.logout();
+                feedActivity.navigateToMainActivity();
             }
 
         });
 
         // Set the funny video button onclick listener
+        // this will send the user to the FunnyVideoActivity
         Button funnyVideoButton = this.findViewById(R.id.funnyVideoButton);
 
         funnyVideoButton.setOnClickListener(new View.OnClickListener() {
@@ -99,6 +107,7 @@ public class FeedActivity extends AppCompatActivity {
 
     public void beginPageChange() {
         // Executes whenever the ViewPager is swiped
+        // Retrieves the likes and comments of the current post
 
         String currentPost = this.getCurrentPostTitle();
 
@@ -108,6 +117,11 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     public void afterFetchLikes() {
+        // After the app retrieves the likes of the current post
+        // it will check and see if the user has liked the current post.
+        // If the user has liked the current post
+        // then the like button will say "view likes" instead of just "like"
+        // and it will have a different functionality (see handleLikeButtonOnClick for more info)
 
         Button likeButton = (Button)this.findViewById(R.id.likeButton);
 
@@ -135,6 +149,11 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     public void afterFetchComments() {
+        // After the app retrieves the comments of the current post
+        // it will check and see if the user has commented on the current post.
+        // If the user has commented on the current post
+        // then the like button will say "view comments" instead of just "comment"
+        // and it will have a different functionality (see handleCommentButtonOnClick for more info)
 
         Button commentButton = (Button)this.findViewById(R.id.commentButton);
 
@@ -159,14 +178,15 @@ public class FeedActivity extends AppCompatActivity {
         return false;
     }
 
-    public void logout() {
+    public void navigateToMainActivity() {
+        // Navigates back to the MainActivity
 
-        // Navigate back to the MainActivity
         Intent intent = new Intent(FeedActivity.this, MainActivity.class);
         FeedActivity.this.startActivity(intent);
     }
 
     public void navigateToFunnyVideoActivity() {
+        // Navigates to the FunnyVideoActivity
 
         Bundle extras = this.getIntent().getExtras();
         String username = extras.getString("username");
@@ -185,20 +205,27 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     public void handleLikeButtonOnClick() {
+        // If the user has already liked the current post
+        // then navigate to the LikesActivity to view who liked the post
         if (this.hasLiked())
             this.navigateToLikesActivity();
         else
+        // else just like the post
             this.like();
     }
 
     public void handleCommentButtonOnClick() {
+        // If the user has already commented on the current post
+        // then navigate to the CommentsActivity to view who commented on the post
         if (this.hasCommented())
             this.navigateToCommentsActivity();
         else
+        // else navigate to the AddCommentActivity
             this.navigateToAddCommentActivity();
     }
 
     public void like() {
+        // Queries the server that the user likes the current post
 
         String currentPost = this.getCurrentPostTitle();
 
@@ -211,6 +238,7 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     public void navigateToLikesActivity() {
+        // Navigates to the LikesActivity so the user can view who liked the current post
 
         Bundle extras = this.getIntent().getExtras();
         String username = extras.getString("username");
@@ -230,6 +258,7 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     public void navigateToAddCommentActivity() {
+        // Navigate to the AddCommentActivity so the user can submit a comment on the current post
 
         String currentPost = this.getCurrentPostTitle();
 
@@ -248,6 +277,7 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     public void navigateToCommentsActivity() {
+        // Navigate to the CommentsActivity so the user can view who commented on the current post
 
         Bundle extras = this.getIntent().getExtras();
         String username = extras.getString("username");
@@ -267,22 +297,29 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     private String getCurrentPostTitle() {
+        // Gets the title of the post based on the position of the ViewPager
         return "a" + String.valueOf(this.viewPager.getCurrentItem() + 1);
     }
 
     private int positionFromPostTitle(String postTitle) {
+        // Gets the position of the ViewPager based on the title of the post
 
         char c = postTitle.charAt(1);
 
         return Character.getNumericValue(c) - 1;
     }
 
+    // Setters for the likes and comments of the current post
     public void setLikes(ArrayList<Like> likes) { this.likes = likes; }
     public void setComments(ArrayList<Comment> comments) { this.comments = comments; }
 }
 
 
 class LikeTask extends AsyncTask<Object, Void, String> {
+
+    /*
+    Asynchronous task to query the database that a user likes a certain post.
+     */
 
     private FeedActivity feedActivity;
     private String postTitle;
@@ -291,15 +328,16 @@ class LikeTask extends AsyncTask<Object, Void, String> {
     protected String doInBackground(Object... params) {
 
         this.feedActivity = (FeedActivity)params[0];
-
         String username = (String)params[1];
         String sessionKey = (String)params[2];
         this.postTitle = (String)params[3];
 
+        // Create the query to like a post
+        // Uses the /like/:username/:sessionKey/:post endpoint on the server
         String query = MainActivity.serverBase + "like/" + username + "/" + sessionKey + "/" + this.postTitle;
 
+        // Get the response from the server
         String response = HttpRequest.executeGet(query);
-
         return response;
     }
 
@@ -309,15 +347,20 @@ class LikeTask extends AsyncTask<Object, Void, String> {
 
         try {
 
+            // Parse the response from the server as JSON
             final JSONObject json = new JSONObject(result);
 
+            // If the status of the response is 0
+            // then something when wrong on the server-side, so throw an error
             int status = json.getInt("status");
-
             if (status == 0)
                 throw new Exception();
 
+            // At this point, the server properly processed the like query
+            // Let the user know they were able to like the post
             Toast.makeText(this.feedActivity, "Liked post!", Toast.LENGTH_SHORT).show();
 
+            // Refresh the likes on the current post for the user to see
             new FetchLikesTask().execute(this.feedActivity, this.postTitle);
 
         }
@@ -334,6 +377,10 @@ class LikeTask extends AsyncTask<Object, Void, String> {
 
 class FetchLikesTask extends AsyncTask<Object, Void, String> {
 
+    /*
+    Fetches all the likes of a particular post (usernames of the likes)
+     */
+
     private FeedActivity feedActivity;
 
     @Override
@@ -343,10 +390,12 @@ class FetchLikesTask extends AsyncTask<Object, Void, String> {
 
         String postTitle = (String)params[1];
 
+        // Create the query to fetch the likes
+        // Uses the /likes/:post endpoint on the server
         String query = MainActivity.serverBase + "likes/" + postTitle;
 
+        // Get the response from the server
         String response = HttpRequest.executeGet(query);
-
         return response;
     }
 
@@ -357,8 +406,10 @@ class FetchLikesTask extends AsyncTask<Object, Void, String> {
         try {
             ArrayList<Like> likes = new ArrayList<Like>();
 
+            // parse the resultant JSON response
             JSONArray likesJSON = new JSONArray(result);
 
+            // Convert the string response into a list of Like objects
             for (int i = 0; i < likesJSON.length(); ++i) {
                 JSONObject likeJSON = likesJSON.getJSONObject(i);
 
@@ -368,8 +419,10 @@ class FetchLikesTask extends AsyncTask<Object, Void, String> {
 
             }
 
+            // Update the likes of the current post
             this.feedActivity.setLikes(likes);
 
+            // Update the UI
             this.feedActivity.afterFetchLikes();
 
         }
@@ -389,13 +442,14 @@ class FetchCommentsTask extends AsyncTask<Object, Void, String> {
     protected String doInBackground(Object... params) {
 
         this.feedActivity = (FeedActivity)params[0];
-
         String postTitle = (String)params[1];
 
+        // Create the query to be sent to the server
+        // Uses the /comments/:post endpoint
         String query = MainActivity.serverBase + "comments/" + postTitle;
 
+        // Get the response from the server
         String response = HttpRequest.executeGet(query);
-
         return response;
     }
 
@@ -406,8 +460,10 @@ class FetchCommentsTask extends AsyncTask<Object, Void, String> {
         try {
             ArrayList<Comment> comments = new ArrayList<Comment>();
 
+            // Parse the server response as JSON
             JSONArray commentsJSON = new JSONArray(result);
 
+            // Convert the JSON response into a list of Comment objects
             for (int i = 0; i < commentsJSON.length(); ++i) {
                 JSONObject commentJSON = commentsJSON.getJSONObject(i);
 
@@ -417,8 +473,10 @@ class FetchCommentsTask extends AsyncTask<Object, Void, String> {
                 comments.add(new Comment(username, comment));
             }
 
+            // Set the comments of the current post
             this.feedActivity.setComments(comments);
 
+            // Update the UI
             this.feedActivity.afterFetchComments();
 
         }

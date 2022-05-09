@@ -156,7 +156,7 @@ class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecyclerVie
         // Set the click listener for each item in the RecyclerView
         this.clickListener = itemClickListener;
     }
-    
+
     public interface ItemClickListener {
         // Interface for implementing the on click listener
         void onItemClick(View view, int position);
