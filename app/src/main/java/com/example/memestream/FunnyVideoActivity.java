@@ -9,7 +9,10 @@ import android.widget.Button;
 import android.widget.VideoView;
 
 public class FunnyVideoActivity extends AppCompatActivity {
-
+    /*
+    The FunnyVideoActivity hosts a funny video.
+    The path of the funny video is res/raw/funnyvideo.mp4
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,14 +32,18 @@ public class FunnyVideoActivity extends AppCompatActivity {
 
         });
 
+        // Load the funny video file into the VideoView container
         VideoView videoView = (VideoView)this.findViewById(R.id.funnyVideoVideoView);
         videoView.setVideoPath("android.resource://" + getPackageName() + "/" + R.raw.funnyvideo);
+
+        // Play the video
         videoView.start();
 
 
     }
 
     public void goBack() {
+        // Navigates back to the FeedActivity
 
         Bundle extras = this.getIntent().getExtras();
         String username = extras.getString("username");
