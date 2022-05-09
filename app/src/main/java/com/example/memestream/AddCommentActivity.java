@@ -44,14 +44,12 @@ public class AddCommentActivity extends AppCompatActivity {
 
     public void goBack() {
 
-        // Navigate back to the FeedActivity
-        Intent intent = new Intent(AddCommentActivity.this, FeedActivity.class);
-
         Bundle extras = this.getIntent().getExtras();
-
         String username = extras.getString("username");
         String sessionKey = extras.getString("sessionKey");
-        String post = extras.getString("post");
+
+        // Navigate back to the FeedActivity
+        Intent intent = new Intent(AddCommentActivity.this, FeedActivity.class);
 
         intent.putExtra("username", username);
         intent.putExtra("sessionKey", sessionKey);

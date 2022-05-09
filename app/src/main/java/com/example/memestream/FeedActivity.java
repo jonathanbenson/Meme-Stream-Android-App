@@ -11,8 +11,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Vector;
 
 public class FeedActivity extends AppCompatActivity {
 
@@ -22,6 +25,8 @@ public class FeedActivity extends AppCompatActivity {
             R.drawable.a5, R.drawable.a6};
 
     private ViewPagerAdapter viewPagerAdapter;
+
+    private Vector<Like> likes = new Vector<Like>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +47,7 @@ public class FeedActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
-                feedActivity.pageChange();
+                feedActivity.beginPageChange();
             }
 
         });
@@ -72,7 +77,7 @@ public class FeedActivity extends AppCompatActivity {
 
         likeButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) { feedActivity.like(); }
+            public void onClick(View view) { feedActivity.handleLikeButtonOnClick(); }
         });
 
         // Set the view comments button onclick listener
@@ -82,13 +87,43 @@ public class FeedActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) { feedActivity.comment(); }
         });
+
+        this.beginPageChange();
     }
 
-    public void pageChange() {
+    public void beginPageChange() {
+        // Executes whenever the ViewPager is swiped
 
         String currentPost = "a" + String.valueOf(this.viewPager.getCurrentItem() + 1);
 
         new FetchLikesTask().execute(this, currentPost);
+
+    }
+
+    public void endPageChange() {
+
+        Button likeButton = (Button)this.findViewById(R.id.likeButton);
+
+        if (this.hasLiked()) {
+            likeButton.setText("view likes");
+        }
+        else {
+            likeButton.setText("like");
+        }
+
+    }
+
+    private boolean hasLiked() {
+        // Checks if the current user has liked the current post
+
+        String username = this.getIntent().getExtras().getString("username");
+
+        for (int i = 0; i < this.likes.size(); ++i) {
+            if (likes.get(i).getUsername().equals(username))
+                return true;
+        }
+
+        return false;
 
     }
 
@@ -101,10 +136,25 @@ public class FeedActivity extends AppCompatActivity {
 
     public void viewTutorial() {
 
+        Bundle extras = this.getIntent().getExtras();
+        String username = extras.getString("username");
+        String sessionKey = extras.getString("sessionKey");
+
         // Navigate to the TutorialActivity to view the tutorial
         Intent intent = new Intent(FeedActivity.this, TutorialActivity.class);
+
+        intent.putExtra("username", username);
+        intent.putExtra("sessionKey", sessionKey);
+
         FeedActivity.this.startActivity(intent);
 
+    }
+
+    public void handleLikeButtonOnClick() {
+        if (this.hasLiked())
+            this.viewLikes();
+        else
+            this.like();
     }
 
     public void like() {
@@ -121,8 +171,16 @@ public class FeedActivity extends AppCompatActivity {
 
     public void viewLikes() {
 
+        Bundle extras = this.getIntent().getExtras();
+        String username = extras.getString("username");
+        String sessionKey = extras.getString("sessionKey");
+
         // Navigate to the LikesActivity to view the likes
         Intent intent = new Intent(FeedActivity.this, LikesActivity.class);
+
+        intent.putExtra("username", username);
+        intent.putExtra("sessionKey", sessionKey);
+
         FeedActivity.this.startActivity(intent);
 
     }
@@ -147,15 +205,21 @@ public class FeedActivity extends AppCompatActivity {
 
     public void viewComments() {
 
+        Bundle extras = this.getIntent().getExtras();
+        String username = extras.getString("username");
+        String sessionKey = extras.getString("sessionKey");
+
         // Navigate to the CommentsActivity to view the comments
         Intent intent = new Intent(FeedActivity.this, CommentsActivity.class);
+
+        intent.putExtra("username", username);
+        intent.putExtra("sessionKey", sessionKey);
+
         FeedActivity.this.startActivity(intent);
 
     }
 
-    private void fetchComments(String postTitle) {
-
-    }
+    public void setLikes(Vector<Like> likes) { this.likes = likes; }
 }
 
 class Like {
@@ -211,8 +275,6 @@ class LikeTask extends AsyncTask<Object, Void, String> {
 
         try {
 
-            Log.d("response", result);
-
             final JSONObject json = new JSONObject(result);
 
             int status = json.getInt("status");
@@ -256,7 +318,27 @@ class FetchLikesTask extends AsyncTask<Object, Void, String> {
     @Override
     protected void onPostExecute(String result) {
 
-        Log.d("likes: ", result);
+        try {
+            Vector<Like> likes = new Vector<Like>();
+
+            JSONArray likesJSON = new JSONArray(result);
+
+            for (int i = 0; i < likesJSON.length(); ++i) {
+                JSONObject likeJSON = likesJSON.getJSONObject(i);
+
+                String username = likeJSON.getString("username");
+
+                likes.add(new Like(username));
+            }
+
+            this.feedActivity.setLikes(likes);
+
+            this.feedActivity.endPageChange();
+
+        }
+        catch (JSONException exc) {
+            Toast.makeText(this.feedActivity, "Cannot connect to server!", Toast.LENGTH_SHORT).show();
+        }
 
     }
 

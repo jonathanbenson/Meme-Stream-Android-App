@@ -31,8 +31,16 @@ public class TutorialActivity extends AppCompatActivity {
 
     public void goBack() {
 
+        Bundle extras = this.getIntent().getExtras();
+        String username = extras.getString("username");
+        String sessionKey = extras.getString("sessionKey");
+
         // Navigate back to the FeedActivity
         Intent intent = new Intent(TutorialActivity.this, FeedActivity.class);
+
+        intent.putExtra("username", username);
+        intent.putExtra("sessionKey", sessionKey);
+
         TutorialActivity.this.startActivity(intent);
 
     }
