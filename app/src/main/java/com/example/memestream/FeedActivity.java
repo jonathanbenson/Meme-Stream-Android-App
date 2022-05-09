@@ -279,32 +279,6 @@ public class FeedActivity extends AppCompatActivity {
     public void setComments(Vector<Comment> comments) { this.comments = comments; }
 }
 
-class Like {
-
-    private String username;
-
-    public Like(String username) {
-        this.username = username;
-    }
-
-    public String getUsername() { return this.username; }
-}
-
-class Comment {
-
-    private String username;
-    private String comment;
-
-    public Comment(String username, String comment) {
-        this.username = username;
-        this.comment = comment;
-    }
-
-    public String getUsername() { return this.username; }
-    public String getComment() { return this.comment; }
-
-
-}
 
 class LikeTask extends AsyncTask<Object, Void, String> {
 
