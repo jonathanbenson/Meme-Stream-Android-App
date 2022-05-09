@@ -6,27 +6,33 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.Vector;
 
 public class LikesActivity extends AppCompatActivity {
 
-    private ArrayList<Like> likes;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_likes);
 
-        this.likes = (ArrayList<Like>)this.getIntent().getSerializableExtra("likes");
+        ArrayList<Like> likes = (ArrayList<Like>)this.getIntent().getSerializableExtra("likes");
 
-        for (int i = 0; i < this.likes.size(); ++i) {
-            Like c = this.likes.get(i);
+        ArrayList<String> items = new ArrayList<String>();
 
-            Log.d("liked by", c.getUsername());
+        for (int i = 0; i < likes.size(); ++i) {
+            Like like = likes.get(i);
+
+            items.add(like.getUsername());
         }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.listview, items);
+        ListView listView = (ListView)this.findViewById(R.id.likesListView);
+        listView.setAdapter(adapter);
 
         LikesActivity likesActivity = this;
 
