@@ -6,13 +6,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.VideoView;
 
 public class FunnyVideoActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tutorial);
+        setContentView(R.layout.activity_funny_video);
 
         FunnyVideoActivity funnyVideoActivity = this;
 
@@ -27,6 +28,12 @@ public class FunnyVideoActivity extends AppCompatActivity {
             }
 
         });
+
+        VideoView videoView = (VideoView)this.findViewById(R.id.funnyVideoVideoView);
+        videoView.setVideoPath("android.resource://" + getPackageName() + "/" + R.raw.funnyvideo);
+        videoView.start();
+
+
     }
 
     public void goBack() {
