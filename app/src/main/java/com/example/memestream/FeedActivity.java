@@ -27,6 +27,7 @@ public class FeedActivity extends AppCompatActivity {
     private ViewPagerAdapter viewPagerAdapter;
 
     private Vector<Like> likes = new Vector<Like>();
+    private Vector<Comment> comments = new Vector<Comment>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +86,7 @@ public class FeedActivity extends AppCompatActivity {
 
         commentButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) { feedActivity.comment(); }
+            public void onClick(View view) { feedActivity.handleCommentButtonOnClick(); }
         });
 
         this.beginPageChange();
@@ -97,10 +98,11 @@ public class FeedActivity extends AppCompatActivity {
         String currentPost = "a" + String.valueOf(this.viewPager.getCurrentItem() + 1);
 
         new FetchLikesTask().execute(this, currentPost);
+        new FetchCommentsTask().execute(this, currentPost);
 
     }
 
-    public void endPageChange() {
+    public void afterFetchLikes() {
 
         Button likeButton = (Button)this.findViewById(R.id.likeButton);
 
@@ -125,6 +127,31 @@ public class FeedActivity extends AppCompatActivity {
 
         return false;
 
+    }
+
+    public void afterFetchComments() {
+
+        Button commentButton = (Button)this.findViewById(R.id.commentButton);
+
+        if (this.hasCommented()) {
+            commentButton.setText("view comments");
+        }
+        else {
+            commentButton.setText("comment");
+        }
+    }
+
+    private boolean hasCommented() {
+        // Checks if the current user has commented on the current post
+
+        String username = this.getIntent().getExtras().getString("username");
+
+        for (int i = 0; i < this.comments.size(); ++i) {
+            if (comments.get(i).getUsername().equals(username))
+                return true;
+        }
+
+        return false;
     }
 
     public void logout() {
@@ -155,6 +182,13 @@ public class FeedActivity extends AppCompatActivity {
             this.viewLikes();
         else
             this.like();
+    }
+
+    public void handleCommentButtonOnClick() {
+        if (this.hasCommented())
+            this.viewComments();
+        else
+            this.comment();
     }
 
     public void like() {
@@ -220,6 +254,7 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     public void setLikes(Vector<Like> likes) { this.likes = likes; }
+    public void setComments(Vector<Comment> comments) { this.comments = comments; }
 }
 
 class Like {
@@ -333,7 +368,56 @@ class FetchLikesTask extends AsyncTask<Object, Void, String> {
 
             this.feedActivity.setLikes(likes);
 
-            this.feedActivity.endPageChange();
+            this.feedActivity.afterFetchLikes();
+
+        }
+        catch (JSONException exc) {
+            Toast.makeText(this.feedActivity, "Cannot connect to server!", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+}
+
+class FetchCommentsTask extends AsyncTask<Object, Void, String> {
+
+    private FeedActivity feedActivity;
+
+    @Override
+    protected String doInBackground(Object... params) {
+
+        this.feedActivity = (FeedActivity)params[0];
+
+        String postTitle = (String)params[1];
+
+        String query = MainActivity.serverBase + "comments/" + postTitle;
+
+        String response = HttpRequest.executeGet(query);
+
+        return response;
+    }
+
+
+    @Override
+    protected void onPostExecute(String result) {
+
+        try {
+            Vector<Comment> comments = new Vector<Comment>();
+
+            JSONArray commentsJSON = new JSONArray(result);
+
+            for (int i = 0; i < commentsJSON.length(); ++i) {
+                JSONObject commentJSON = commentsJSON.getJSONObject(i);
+
+                String username = commentJSON.getString("username");
+                String comment = commentJSON.getString("comment");
+
+                comments.add(new Comment(username, comment));
+            }
+
+            this.feedActivity.setComments(comments);
+
+            this.feedActivity.afterFetchComments();
 
         }
         catch (JSONException exc) {

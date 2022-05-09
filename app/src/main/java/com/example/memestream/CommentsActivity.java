@@ -16,18 +16,6 @@ public class CommentsActivity extends AppCompatActivity {
 
         CommentsActivity commentsActivity = this;
 
-        // Set the add comment button onclick listener
-        Button addCommentButton = this.findViewById(R.id.addCommentButton);
-
-        addCommentButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-                commentsActivity.addComment();
-            }
-
-        });
-
         // Set the go back button onclick listener
         Button commentsGoBackButton = this.findViewById(R.id.commentsGoBackButton);
 
@@ -39,13 +27,6 @@ public class CommentsActivity extends AppCompatActivity {
             }
 
         });
-    }
-
-    public void addComment() {
-        // Navigate to the AddCommentActivity
-        Intent intent = new Intent(CommentsActivity.this, AddCommentActivity.class);
-        CommentsActivity.this.startActivity(intent);
-
     }
 
     public void goBack() {
