@@ -3,6 +3,9 @@ package com.example.memestream;
 import java.io.Serializable;
 
 class Comment implements Serializable {
+    /*
+    Utility class to house comments received from the server.
+     */
 
     private String username;
     private String comment;

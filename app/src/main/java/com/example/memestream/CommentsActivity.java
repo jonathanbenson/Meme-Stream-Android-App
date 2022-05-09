@@ -19,18 +19,24 @@ import java.util.List;
 import java.util.Vector;
 
 public class CommentsActivity extends AppCompatActivity {
+    /*
+    The CommentsActivity showcases the comments for a particular post.
 
-    MyRecyclerViewAdapter adapter;
+    It houses the comments in a RecyclerView container
+     */
+
+    CommentRecyclerViewAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comments);
 
+        // Get the comments from the FeedActivity
         ArrayList<Comment> comments = (ArrayList)this.getIntent().getSerializableExtra("comments");
 
+        // Extract the comment's content and format each of them as Strings
         ArrayList<String> items = new ArrayList<String>();
-
         for (int i = 0; i < comments.size(); ++i) {
             Comment c = comments.get(i);
 
@@ -39,10 +45,11 @@ public class CommentsActivity extends AppCompatActivity {
             items.add(item);
         }
 
-
+        // Create the recycler view to house the comments
+        // and populate it with the formatted comment Strings above
         RecyclerView recyclerView = (RecyclerView)this.findViewById(R.id.commentsRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        this.adapter = new MyRecyclerViewAdapter(this, items);
+        this.adapter = new CommentRecyclerViewAdapter(this, items);
         recyclerView.setAdapter(adapter);
 
         CommentsActivity commentsActivity = this;
@@ -61,6 +68,7 @@ public class CommentsActivity extends AppCompatActivity {
     }
 
     public void goBack() {
+        // Navigate back to the FeedActivity
 
         Bundle extras = this.getIntent().getExtras();
         String username = extras.getString("username");
@@ -79,67 +87,78 @@ public class CommentsActivity extends AppCompatActivity {
     }
 }
 
-class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.ViewHolder> {
-
-    private List<String> mData;
-    private LayoutInflater mInflater;
-    private ItemClickListener mClickListener;
+class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecyclerViewAdapter.ViewHolder> {
+    /*
+    The recycler view adapter for the recycler view to hold the comments.
+     */
+    private List<String> data;
+    private LayoutInflater inflater;
+    private ItemClickListener clickListener;
 
     // data is passed into the constructor
-    MyRecyclerViewAdapter(Context context, List<String> data) {
-        this.mInflater = LayoutInflater.from(context);
-        this.mData = data;
+    CommentRecyclerViewAdapter(Context context, List<String> data) {
+        this.inflater = LayoutInflater.from(context);
+        this.data = data;
     }
 
-    // inflates the row layout from xml when needed
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.recyclerview, parent, false);
+        // Inflate the row layout from the recycler view xml
+
+        View view = this.inflater.inflate(R.layout.recyclerview, parent, false);
         return new ViewHolder(view);
     }
 
-    // binds the data to the TextView in each row
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        String animal = mData.get(position);
-        holder.myTextView.setText(animal);
+    public void onBindViewHolder(ViewHolder viewHolder, int position) {
+        // Bind the data to the text view in each row of the RecyclerView
+
+        String comment = this.data.get(position);
+        viewHolder.textView.setText(comment);
     }
 
-    // total number of rows
     @Override
     public int getItemCount() {
-        return mData.size();
+        // get the total number of comments
+
+        return this.data.size();
     }
 
 
-    // stores and recycles views as they are scrolled off screen
+
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView myTextView;
+        /*
+        The ViewHolder class stores and recycles views as they are clipped from view
+         */
+
+        TextView textView;
 
         ViewHolder(View itemView) {
             super(itemView);
-            myTextView = itemView.findViewById(R.id.recyclerViewItem);
+            this.textView = itemView.findViewById(R.id.recyclerViewItem);
             itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
-            if (mClickListener != null) mClickListener.onItemClick(view, getAdapterPosition());
+            // Handles on click of the comment (nothing should happen)
+            if (clickListener != null) clickListener.onItemClick(view, getAdapterPosition());
         }
     }
 
-    // convenience method for getting data at click position
     String getItem(int id) {
-        return mData.get(id);
+        // Get the data at the corresponding click position
+
+        return this.data.get(id);
     }
 
-    // allows clicks events to be caught
     void setClickListener(ItemClickListener itemClickListener) {
-        this.mClickListener = itemClickListener;
+        // Set the click listener for each item in the RecyclerView
+        this.clickListener = itemClickListener;
     }
-
-    // parent activity will implement this method to respond to click events
+    
     public interface ItemClickListener {
+        // Interface for implementing the on click listener
         void onItemClick(View view, int position);
     }
 }
