@@ -288,6 +288,7 @@ public class FeedActivity extends AppCompatActivity {
 class LikeTask extends AsyncTask<Object, Void, String> {
 
     private FeedActivity feedActivity;
+    private String postTitle;
 
     @Override
     protected String doInBackground(Object... params) {
@@ -296,9 +297,9 @@ class LikeTask extends AsyncTask<Object, Void, String> {
 
         String username = (String)params[1];
         String sessionKey = (String)params[2];
-        String postTitle = (String)params[3];
+        this.postTitle = (String)params[3];
 
-        String query = MainActivity.serverBase + "like/" + username + "/" + sessionKey + "/" + postTitle;
+        String query = MainActivity.serverBase + "like/" + username + "/" + sessionKey + "/" + this.postTitle;
 
         String response = HttpRequest.executeGet(query);
 
@@ -319,6 +320,8 @@ class LikeTask extends AsyncTask<Object, Void, String> {
                 throw new Exception();
 
             Toast.makeText(this.feedActivity, "Liked post!", Toast.LENGTH_SHORT).show();
+
+            new FetchLikesTask().execute(this.feedActivity, this.postTitle);
 
         }
         catch (JSONException exc) {
