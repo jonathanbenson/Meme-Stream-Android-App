@@ -18,7 +18,9 @@ import org.json.JSONObject;
 import java.util.Vector;
 
 public class AddCommentActivity extends AppCompatActivity {
-
+    /*
+    The AddCommentActivity allows a user to submit a comment on a particular post.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,12 +32,10 @@ public class AddCommentActivity extends AppCompatActivity {
         Button addCommentGoBackButton = this.findViewById(R.id.addCommentGoBackButton);
 
         addCommentGoBackButton.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View view) {
                 addCommentActivity.goBack();
             }
-
         });
 
         // Set the submit comment button onclick listener
@@ -52,6 +52,7 @@ public class AddCommentActivity extends AppCompatActivity {
     }
 
     public void goBack() {
+        // The goBack method navigates back to the FeedActivity
 
         Bundle extras = this.getIntent().getExtras();
         String username = extras.getString("username");
@@ -70,7 +71,9 @@ public class AddCommentActivity extends AppCompatActivity {
     }
 
     public void submitComment() {
-
+        /*
+        Queries the database with a comment to submit on a post.
+         */
         Bundle extras = this.getIntent().getExtras();
 
         String username = extras.getString("username");
@@ -78,8 +81,12 @@ public class AddCommentActivity extends AppCompatActivity {
         String post = extras.getString("post");
         String comment = ((EditText)this.findViewById(R.id.commentText)).getText().toString();
 
+        // if the comment input field is blank
+        // then remind the user to enter a comment...and do nothing
         if (comment.isEmpty())
             Toast.makeText(this, "Comment must not be empty!", Toast.LENGTH_SHORT).show();
+        // if the user has entered a comment
+        // then send the comment to the database
         else
             new CommentTask().execute(this, username, sessionKey, post, comment);
 
@@ -87,6 +94,10 @@ public class AddCommentActivity extends AppCompatActivity {
 }
 
 class CommentTask extends AsyncTask<Object, Void, String> {
+
+    /*
+    Asynchronously sends a comment to the database for a particular post.
+     */
 
     private AddCommentActivity addCommentActivity;
 
@@ -100,10 +111,11 @@ class CommentTask extends AsyncTask<Object, Void, String> {
         String postTitle = (String)params[3];
         String comment = (String)params[4];
 
+        // Construct the query to send to the server
         String query = MainActivity.serverBase + "comment/" + username + "/" + sessionKey + "/" + postTitle + "/" + comment;
 
+        // Get the response from the server
         String response = HttpRequest.executeGet(query);
-
         return response;
     }
 
@@ -112,9 +124,11 @@ class CommentTask extends AsyncTask<Object, Void, String> {
     protected void onPostExecute(String result) {
 
         try {
-
+            // Parse the response's JSON content
             JSONObject res = new JSONObject(result);
 
+            // If the status from the response is 1 (success)
+            // then thank the user for their feedback and navigate back to the FeedActivity
             if (res.getInt("status") == 1) {
                 Toast.makeText(this.addCommentActivity, "Thanks for the feedback!", Toast.LENGTH_SHORT).show();
                 this.addCommentActivity.goBack();
