@@ -34,12 +34,14 @@ public class TutorialActivity extends AppCompatActivity {
         Bundle extras = this.getIntent().getExtras();
         String username = extras.getString("username");
         String sessionKey = extras.getString("sessionKey");
+        String post = extras.getString("post");
 
         // Navigate back to the FeedActivity
         Intent intent = new Intent(TutorialActivity.this, FeedActivity.class);
 
         intent.putExtra("username", username);
         intent.putExtra("sessionKey", sessionKey);
+        intent.putExtra("post", post);
 
         TutorialActivity.this.startActivity(intent);
 

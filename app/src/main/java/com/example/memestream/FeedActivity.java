@@ -53,6 +53,11 @@ public class FeedActivity extends AppCompatActivity {
 
         });
 
+        String currentPost = this.getIntent().getExtras().getString("post");
+
+        if (currentPost != null)
+            this.viewPager.setCurrentItem(this.positionFromPostTitle(currentPost));
+
         // Set the logout button onclick listener
         Button logoutButton = this.findViewById(R.id.logoutButton);
 
@@ -70,7 +75,7 @@ public class FeedActivity extends AppCompatActivity {
 
         viewTutorialButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) { feedActivity.viewTutorial(); }
+            public void onClick(View view) { feedActivity.navigateToTutorialActivity(); }
         });
 
         // Set the view likes button onclick listener
@@ -95,7 +100,7 @@ public class FeedActivity extends AppCompatActivity {
     public void beginPageChange() {
         // Executes whenever the ViewPager is swiped
 
-        String currentPost = "a" + String.valueOf(this.viewPager.getCurrentItem() + 1);
+        String currentPost = this.getCurrentPostTitle();
 
         new FetchLikesTask().execute(this, currentPost);
         new FetchCommentsTask().execute(this, currentPost);
@@ -161,17 +166,19 @@ public class FeedActivity extends AppCompatActivity {
         FeedActivity.this.startActivity(intent);
     }
 
-    public void viewTutorial() {
+    public void navigateToTutorialActivity() {
 
         Bundle extras = this.getIntent().getExtras();
         String username = extras.getString("username");
         String sessionKey = extras.getString("sessionKey");
+        String post = this.getCurrentPostTitle();
 
         // Navigate to the TutorialActivity to view the tutorial
         Intent intent = new Intent(FeedActivity.this, TutorialActivity.class);
 
         intent.putExtra("username", username);
         intent.putExtra("sessionKey", sessionKey);
+        intent.putExtra("post", post);
 
         FeedActivity.this.startActivity(intent);
 
@@ -179,21 +186,21 @@ public class FeedActivity extends AppCompatActivity {
 
     public void handleLikeButtonOnClick() {
         if (this.hasLiked())
-            this.viewLikes();
+            this.navigateToLikesActivity();
         else
             this.like();
     }
 
     public void handleCommentButtonOnClick() {
         if (this.hasCommented())
-            this.viewComments();
+            this.navigateToCommentsActivity();
         else
-            this.comment();
+            this.navigateToAddCommentActivity();
     }
 
     public void like() {
 
-        String currentPost = "a" + String.valueOf(this.viewPager.getCurrentItem() + 1);
+        String currentPost = this.getCurrentPostTitle();
 
         Bundle extras = this.getIntent().getExtras();
         String username = extras.getString("username");
@@ -203,25 +210,27 @@ public class FeedActivity extends AppCompatActivity {
 
     }
 
-    public void viewLikes() {
+    public void navigateToLikesActivity() {
 
         Bundle extras = this.getIntent().getExtras();
         String username = extras.getString("username");
         String sessionKey = extras.getString("sessionKey");
+        String post = this.getCurrentPostTitle();
 
         // Navigate to the LikesActivity to view the likes
         Intent intent = new Intent(FeedActivity.this, LikesActivity.class);
 
         intent.putExtra("username", username);
         intent.putExtra("sessionKey", sessionKey);
+        intent.putExtra("post", post);
 
         FeedActivity.this.startActivity(intent);
 
     }
 
-    public void comment() {
+    public void navigateToAddCommentActivity() {
 
-        String currentPost = "a" + String.valueOf(this.viewPager.getCurrentItem() + 1);
+        String currentPost = this.getCurrentPostTitle();
 
         // Navigate to the AddCommentActivity to add a comment
         Intent intent = new Intent(FeedActivity.this, AddCommentActivity.class);
@@ -237,20 +246,33 @@ public class FeedActivity extends AppCompatActivity {
         FeedActivity.this.startActivity(intent);
     }
 
-    public void viewComments() {
+    public void navigateToCommentsActivity() {
 
         Bundle extras = this.getIntent().getExtras();
         String username = extras.getString("username");
         String sessionKey = extras.getString("sessionKey");
+        String post = this.getCurrentPostTitle();
 
         // Navigate to the CommentsActivity to view the comments
         Intent intent = new Intent(FeedActivity.this, CommentsActivity.class);
 
         intent.putExtra("username", username);
         intent.putExtra("sessionKey", sessionKey);
+        intent.putExtra("post", post);
 
         FeedActivity.this.startActivity(intent);
 
+    }
+
+    private String getCurrentPostTitle() {
+        return "a" + String.valueOf(this.viewPager.getCurrentItem() + 1);
+    }
+
+    private int positionFromPostTitle(String postTitle) {
+
+        char c = postTitle.charAt(1);
+
+        return Character.getNumericValue(c) - 1;
     }
 
     public void setLikes(Vector<Like> likes) { this.likes = likes; }
