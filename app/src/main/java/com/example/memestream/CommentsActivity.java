@@ -4,15 +4,29 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import java.util.ArrayList;
+import java.util.Vector;
+
 public class CommentsActivity extends AppCompatActivity {
+
+    private ArrayList<Comment> comments;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comments);
+
+        this.comments = (ArrayList)this.getIntent().getSerializableExtra("comments");
+
+        for (int i = 0; i < this.comments.size(); ++i) {
+            Comment c = this.comments.get(i);
+
+            Log.d("comment", c.getUsername() + " said, \"" + c.getComment() + "\"");
+        }
 
         CommentsActivity commentsActivity = this;
 

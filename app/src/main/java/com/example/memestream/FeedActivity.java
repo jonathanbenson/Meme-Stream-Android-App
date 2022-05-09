@@ -15,6 +15,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 public class FeedActivity extends AppCompatActivity {
@@ -26,8 +29,8 @@ public class FeedActivity extends AppCompatActivity {
 
     private ViewPagerAdapter viewPagerAdapter;
 
-    private Vector<Like> likes = new Vector<Like>();
-    private Vector<Comment> comments = new Vector<Comment>();
+    private ArrayList<Like> likes = new ArrayList<Like>();
+    private ArrayList<Comment> comments = new ArrayList<Comment>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -223,6 +226,7 @@ public class FeedActivity extends AppCompatActivity {
         intent.putExtra("username", username);
         intent.putExtra("sessionKey", sessionKey);
         intent.putExtra("post", post);
+        intent.putExtra("likes", (Serializable)this.likes);
 
         FeedActivity.this.startActivity(intent);
 
@@ -259,6 +263,7 @@ public class FeedActivity extends AppCompatActivity {
         intent.putExtra("username", username);
         intent.putExtra("sessionKey", sessionKey);
         intent.putExtra("post", post);
+        intent.putExtra("comments", (Serializable)this.comments);
 
         FeedActivity.this.startActivity(intent);
 
@@ -275,8 +280,8 @@ public class FeedActivity extends AppCompatActivity {
         return Character.getNumericValue(c) - 1;
     }
 
-    public void setLikes(Vector<Like> likes) { this.likes = likes; }
-    public void setComments(Vector<Comment> comments) { this.comments = comments; }
+    public void setLikes(ArrayList<Like> likes) { this.likes = likes; }
+    public void setComments(ArrayList<Comment> comments) { this.comments = comments; }
 }
 
 
@@ -350,7 +355,7 @@ class FetchLikesTask extends AsyncTask<Object, Void, String> {
     protected void onPostExecute(String result) {
 
         try {
-            Vector<Like> likes = new Vector<Like>();
+            ArrayList<Like> likes = new ArrayList<Like>();
 
             JSONArray likesJSON = new JSONArray(result);
 
@@ -360,6 +365,7 @@ class FetchLikesTask extends AsyncTask<Object, Void, String> {
                 String username = likeJSON.getString("username");
 
                 likes.add(new Like(username));
+
             }
 
             this.feedActivity.setLikes(likes);
@@ -398,7 +404,7 @@ class FetchCommentsTask extends AsyncTask<Object, Void, String> {
     protected void onPostExecute(String result) {
 
         try {
-            Vector<Comment> comments = new Vector<Comment>();
+            ArrayList<Comment> comments = new ArrayList<Comment>();
 
             JSONArray commentsJSON = new JSONArray(result);
 

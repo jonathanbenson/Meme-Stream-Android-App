@@ -1,6 +1,8 @@
 package com.example.memestream;
 
-class Like {
+import java.io.Serializable;
+
+class Like implements Serializable {
 
     private String username;
 

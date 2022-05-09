@@ -1,6 +1,8 @@
 package com.example.memestream;
 
-class Comment {
+import java.io.Serializable;
+
+class Comment implements Serializable {
 
     private String username;
     private String comment;
