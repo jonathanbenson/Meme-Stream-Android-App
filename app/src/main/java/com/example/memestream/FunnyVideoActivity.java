@@ -7,14 +7,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-public class TutorialActivity extends AppCompatActivity {
+public class FunnyVideoActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tutorial);
 
-        TutorialActivity tutorialActivity = this;
+        FunnyVideoActivity funnyVideoActivity = this;
 
         // Set the go back button onclick listener
         Button tutorialGoBackButton = this.findViewById(R.id.tutorialGoBackButton);
@@ -23,7 +23,7 @@ public class TutorialActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
-                tutorialActivity.goBack();
+                funnyVideoActivity.goBack();
             }
 
         });
@@ -37,13 +37,13 @@ public class TutorialActivity extends AppCompatActivity {
         String post = extras.getString("post");
 
         // Navigate back to the FeedActivity
-        Intent intent = new Intent(TutorialActivity.this, FeedActivity.class);
+        Intent intent = new Intent(FunnyVideoActivity.this, FeedActivity.class);
 
         intent.putExtra("username", username);
         intent.putExtra("sessionKey", sessionKey);
         intent.putExtra("post", post);
 
-        TutorialActivity.this.startActivity(intent);
+        FunnyVideoActivity.this.startActivity(intent);
 
     }
 }

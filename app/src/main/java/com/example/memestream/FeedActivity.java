@@ -6,7 +6,6 @@ import androidx.viewpager.widget.ViewPager;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -17,8 +16,6 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
 
 public class FeedActivity extends AppCompatActivity {
 
@@ -73,12 +70,12 @@ public class FeedActivity extends AppCompatActivity {
 
         });
 
-        // Set the view tutorial button onclick listener
-        Button viewTutorialButton = this.findViewById(R.id.viewTutorialButton);
+        // Set the funny video button onclick listener
+        Button funnyVideoButton = this.findViewById(R.id.funnyVideoButton);
 
-        viewTutorialButton.setOnClickListener(new View.OnClickListener() {
+        funnyVideoButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) { feedActivity.navigateToTutorialActivity(); }
+            public void onClick(View view) { feedActivity.navigateToFunnyVideoActivity(); }
         });
 
         // Set the view likes button onclick listener
@@ -169,15 +166,15 @@ public class FeedActivity extends AppCompatActivity {
         FeedActivity.this.startActivity(intent);
     }
 
-    public void navigateToTutorialActivity() {
+    public void navigateToFunnyVideoActivity() {
 
         Bundle extras = this.getIntent().getExtras();
         String username = extras.getString("username");
         String sessionKey = extras.getString("sessionKey");
         String post = this.getCurrentPostTitle();
 
-        // Navigate to the TutorialActivity to view the tutorial
-        Intent intent = new Intent(FeedActivity.this, TutorialActivity.class);
+        // Navigate to the FunnyVideoActivity to view the funny video
+        Intent intent = new Intent(FeedActivity.this, FunnyVideoActivity.class);
 
         intent.putExtra("username", username);
         intent.putExtra("sessionKey", sessionKey);

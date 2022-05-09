@@ -23,7 +23,7 @@
             android:name=".LikesActivity"
             android:exported="false" />
         <activity
-            android:name=".TutorialActivity"
+            android:name=".FunnyVideoActivity"
             android:exported="false" />
         <activity
             android:name=".FeedActivity"
